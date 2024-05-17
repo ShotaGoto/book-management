@@ -1,10 +1,10 @@
 <template>
     <div>
         <h1>Add New Book</h1>
-        <from @submit.prevent="addBook">
+        <form @submit.prevent="addBook">
             <input v-model="newBookTitle" type="text" placeholder="Book Title">
             <button type="submit">Add Book</button>
-        </from>
+        </form>
     </div>
 </template>
 
@@ -17,8 +17,9 @@ export default {
     },
     methods: {
         addBook() {
-            this.$emit('addBook', this.newBookTitle)
-            this.newBookTitle = ''
+            if (this.newBookTitle.trim() === '') return;
+            this.$emit('add-book', { title: this.newBookTitle });
+            this.newBookTitle = '';
         }
     }
 }

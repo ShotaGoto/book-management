@@ -24,12 +24,13 @@ export default {
     AddBook
   },
   methods: {
-    addBook(newBookTitle) {
+    addBook(book) {
       const newId = this.books.length ? this.books[this.books.length - 1].id + 1 : 1;
-      this.books.push({ id: newId, title: newBookTitle });
-  },
-  removeBook(bookId) {
-    this.books = this.books.filter(book => book.id !== bookId);
+      this.books.push({ id: newId, ...book });
+    },
+    removeBook(bookId) {
+      this.books = this.books.filter(book => book.id !== bookId);
+    }
   }
 }
 </script>
