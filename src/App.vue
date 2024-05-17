@@ -1,26 +1,35 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <BookList :books="books" @remove-book="removeBook" />
+    <AddBook @add-book="addBook" />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import BookList from './components/BookList.vue'
+import AddBook from './components/AddBook.vue'
 
 export default {
-  name: 'App',
+  data() {
+    return {
+      books: [
+        { id: 1, title: 'Book 1' },
+        { id: 2, title: 'Book 2' },
+        { id: 3, title: 'Book 3' }
+      ]
+    }
+  },
   components: {
-    HelloWorld
+    BookList,
+    AddBook
+  },
+  methods: {
+    addBook(newBookTitle) {
+      const newId = this.books.length ? this.books[this.books.length - 1].id + 1 : 1;
+      this.books.push({ id: newId, title: newBookTitle });
+  },
+  removeBook(bookId) {
+    this.books = this.books.filter(book => book.id !== bookId);
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
