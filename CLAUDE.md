@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git
+
+作業中は区切りのよいタイミング（機能単位・レイヤー単位など）でこまめにコミットしてください。
+
 ## ADR (Architecture Decision Records)
 
 重要な技術判断は `docs/adr/` に記録されています。**調査・開発を始める前に必ず確認してください。**
