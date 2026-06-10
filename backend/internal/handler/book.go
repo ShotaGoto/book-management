@@ -13,7 +13,8 @@ import (
 
 type bookRepo interface {
 	List(ctx context.Context) ([]domain.Book, error)
-	Create(ctx context.Context, title string) (domain.Book, error)
+	Create(ctx context.Context, req domain.CreateBookRequest) (domain.Book, error)
+	Update(ctx context.Context, id int64, req domain.UpdateBookRequest) (domain.Book, error)
 	Delete(ctx context.Context, id int64) error
 }
 
@@ -45,11 +46,30 @@ func (h *BookHandler) Create(c echo.Context) error {
 	if err := h.validate.Struct(req); err != nil {
 		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 	}
-	book, err := h.repo.Create(c.Request().Context(), req.Title)
+	book, err := h.repo.Create(c.Request().Context(), req)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
 	return c.JSON(http.StatusCreated, book)
+}
+
+func (h *BookHandler) Update(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "invalid id")
+	}
+	var req domain.UpdateBookRequest
+	if err := c.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err := h.validate.Struct(req); err != nil {
+		return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+	}
+	book, err := h.repo.Update(c.Request().Context(), id, req)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+	return c.JSON(http.StatusOK, book)
 }
 
 func (h *BookHandler) Delete(c echo.Context) error {

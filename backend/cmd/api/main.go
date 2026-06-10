@@ -49,6 +49,7 @@ func main() {
 	api := e.Group("/api/v1")
 	api.GET("/books", bookHandler.List)
 	api.POST("/books", bookHandler.Create)
+	api.PUT("/books/:id", bookHandler.Update)
 	api.DELETE("/books/:id", bookHandler.Delete)
 
 	port := os.Getenv("PORT")
