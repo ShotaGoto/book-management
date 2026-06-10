@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: book-management-api
+    runtime: go
+    rootDir: backend
+    buildCommand: go build -o server ./cmd/api
+    startCommand: ./server
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # Render ダッシュボードで Supabase の接続文字列を設定
+      - key: CORS_ALLOW_ORIGINS
+        sync: false          # 例: https://your-project.pages.dev
+      - key: PORT
+        value: "10000"       # Render が割り当てる PORT を上書きしないよう sync:false でも可

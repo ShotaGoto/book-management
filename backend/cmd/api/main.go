@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"os"
+	"strings"
 
 	_ "github.com/lib/pq"
 	"github.com/joho/godotenv"
@@ -39,8 +40,12 @@ func main() {
 			return nil
 		},
 	}))
+	corsOrigins := []string{"http://localhost:5173"}
+	if v := os.Getenv("CORS_ALLOW_ORIGINS"); v != "" {
+		corsOrigins = strings.Split(v, ",")
+	}
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:5173"},
+		AllowOrigins: corsOrigins,
 	}))
 
 	bookRepo := repository.NewBookRepository(db)
