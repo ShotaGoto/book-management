@@ -1,4 +1,6 @@
-const BASE = '/api/v1'
+// VITE_API_BASE_URL: 本番では Render の URL を設定（例: https://book-management-api.onrender.com）
+// 未設定時は Vite の dev proxy 経由でローカルバックエンドに転送される
+const BASE = (import.meta.env.VITE_API_BASE_URL ?? '') + '/api/v1'
 
 export type BookStatus = 'unread' | 'reading' | 'done'
 
