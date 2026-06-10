@@ -53,10 +53,27 @@ swag init -g cmd/api/main.go -o docs/swagger       # Swagger ドキュメント�
 
 ```
 book-management/
-├── frontend/      # React SPA (Vite + TypeScript + Tailwind + Zustand)
-├── backend/       # Go API server (Echo + sqlc + PostgreSQL)
-└── docs/adr/      # Architecture Decision Records
+├── frontend/      # React SPA (Vite + TypeScript + Tailwind + Zustand) → Cloudflare Pages
+├── backend/       # Go API server (Echo + sqlc + PostgreSQL) → Render
+├── docs/adr/      # Architecture Decision Records
+└── render.yaml    # Render デプロイ設定
 ```
+
+**本番インフラ（無料枠）**
+
+| レイヤー | サービス | 備考 |
+|---|---|---|
+| フロントエンド | Cloudflare Pages | `frontend/` を `npm run build` → `dist/` をデプロイ |
+| バックエンド | Render (Free) | `render.yaml` 参照。初回リクエストに数秒かかる場合あり |
+| DB | Supabase (Free) | PostgreSQL 互換。`DATABASE_URL` に `?sslmode=require` が必要 |
+
+**本番環境変数**
+
+| 変数 | 設定先 | 内容 |
+|---|---|---|
+| `DATABASE_URL` | Render | Supabase の接続文字列（`?sslmode=require` 付き） |
+| `CORS_ALLOW_ORIGINS` | Render | Cloudflare Pages のドメイン（カンマ区切り可） |
+| `VITE_API_BASE_URL` | Cloudflare Pages | Render の URL（例: `https://book-management-api.onrender.com`） |
 
 ### Frontend (`frontend/src/`)
 
@@ -114,7 +131,7 @@ Browser → GET /api/v1/books → Echo router → handler → repository → Pos
 
 **DB アクセス**: `db/queries/*.sql` に sqlc アノテーション付きで SQL を書き、`sqlc generate` で生成する。ORM は使わない。
 
-**環境変数**: ローカル開発は `.env`（`.env.example` からコピー）。本番値は ECS Task Definition で設定し、コードには含めない。
+**環境変数**: ローカル開発は `.env`（`.env.example` からコピー）。本番値は Render / Cloudflare Pages のダッシュボードで設定し、コードには含めない。
 
 **バリデーション**: リクエストボディは `domain/` の構造体に `validate` タグを付け `go-playground/validator` で検証する。
 
